@@ -10,6 +10,9 @@ if(NOT CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD_REQUIRED ON)
 endif()
 
+set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
+set(CMAKE_CXX_STANDARD 17) 
+
 if(NOT WIN32)
   string(ASCII 27 Esc)
   set(ColourReset "${Esc}[m")
@@ -59,6 +62,7 @@ if(CUDA_FOUND)
   message("${Green}Using CUDA compiler: ${CMAKE_CUDA_COMPILER}${ColourReset}")
   message("${Green}CUDA libraries: ${CUDA_LIBRARIES}${ColourReset}")
   message("${Green}CUDA include directories: ${CUDA_INCLUDE_DIRS}${ColourReset}")
+  message("${Green}CUDA library directories: ${CUDA_LIBRARIES_DIRS}${ColourReset}")
   include_directories(${CUDA_INCLUDE_DIRS})
   link_directories(${CUDA_LIBRARIES_DIRS})
 else()
@@ -67,6 +71,10 @@ endif()
 
 if (OpenCV_FOUND)
   message("${BoldGreen}OpenCV version: ${OpenCV_VERSION}${ColourReset}")
+  message("${Green}OpenCV include directories: ${OpenCV_INCLUDE_DIRS}${ColourReset}")
+  message("${Green}OpenCV libraries: ${OpenCV_LIBS}${ColourReset}")
+  
+
 else()
   message("${BoldRed}OpenCV not found${ColourReset}")
 endif()
@@ -86,18 +94,30 @@ include_directories(include)
 set(library_name tensorrt_bridge)
 set(executable_name main)
 
+set(KERNEL_SOURCES src/kernels/deviceInfo.cu)
+
+add_library(kernels SHARED ${KERNEL_SOURCES})
+set_target_properties(kernels PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
+target_link_libraries(kernels ${CUDA_LIBRARIES})
+
+
+add_library(engine SHARED src/engine.cpp)
+target_link_libraries(engine ${OpenCV_LIBS} ${CUDA_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${TENSORRT_LIBS} fmt::fmt)
+
 add_library(${library_name} SHARED src/tensorrt_bridge.cpp)
-target_link_libraries(${library_name} ${TENSORRT_LIBS} ${CUDA_INCLUDE_DIRS})
+target_link_libraries(${library_name} engine)
 ament_target_dependencies(${library_name} rclcpp)
 
-install(TARGETS ${library_name}
+
+
+install(TARGETS ${library_name} engine kernels
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
 )
 
 add_executable(${executable_name} src/main.cpp)
-target_link_libraries(${executable_name} ${library_name})
+target_link_libraries(${executable_name} ${library_name} kernels)
 
 install(TARGETS ${executable_name} RUNTIME DESTINATION lib/${PROJECT_NAME})
 
@@ -113,4 +133,10 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
+
+
+ament_export_include_directories(include)
+
+ament_export_libraries(${library_name})
+ament_export_dependencies(${dependencies})
 ament_package()

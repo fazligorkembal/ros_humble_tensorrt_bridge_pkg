@@ -1,0 +1,9 @@
+#ifndef ROS_HUMBLE_TENSORRT_BRIDGE_PKG_KERNELS_DEVICEINFO_HPP
+#define ROS_HUMBLE_TENSORRT_BRIDGE_PKG_KERNELS_DEVICEINFO_HPP
+
+#include <cuda_runtime_api.h>
+#include "stdio.h"
+
+void who_am_i_wrapper();
+
+#endif // ROS_HUMBLE_TENSORRT_BRIDGE_PKG_KERNELS_DEVICEINFO_HPP

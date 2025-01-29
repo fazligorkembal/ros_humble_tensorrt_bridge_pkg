@@ -116,6 +116,7 @@ public:
     // Convert NHWC to NCHW and apply scaling and mean subtraction
     static cv::cuda::GpuMat blobFromGpuMats(const std::vector<cv::cuda::GpuMat> &batchInput, const std::array<float, 3> &subVals,
                                             const std::array<float, 3> &divVals, bool normalize, bool swapRB = false);
+    std::vector<std::string> getIOTensorNames() { return m_IOTensorNames; }
 
 private:
     // Build the network
