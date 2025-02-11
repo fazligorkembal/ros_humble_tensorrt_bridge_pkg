@@ -13,8 +13,8 @@ int main()
     TensorRTBridge tensorrt_bridge(logger, "/home/user/Documents/ros2_exp_ws/tensorrt_bridge_folder/src/yolo11n.onnx", "precision_type");
     tensorrt_bridge.modelInfo();
 
-    cv::Mat input = cv::imread("/home/user/Documents/ros2_exp_ws/test.jpg");
-    tensorrt_bridge.predict(input);
+    
+    tensorrt_bridge.predict("/home/user/Documents/ros2_exp_ws/test.jpg");
 
     who_am_i_wrapper();
 

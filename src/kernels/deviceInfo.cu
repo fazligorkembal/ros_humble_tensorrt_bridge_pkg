@@ -13,5 +13,5 @@ void who_am_i_wrapper()
     dim3 threadsPerBlock(5, 1, 1);
     dim3 numBlocks(1, 1, 1);
 
-    who_am_i<<<numBlocks, threadsPerBlock>>>();
+    //who_am_i<<<numBlocks, threadsPerBlock>>>();
 }

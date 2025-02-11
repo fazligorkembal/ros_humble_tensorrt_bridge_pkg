@@ -26,6 +26,7 @@ template <typename T> void Engine<T>::transformOutput(std::vector<std::vector<st
 template <typename T>
 cv::cuda::GpuMat Engine<T>::resizeKeepAspectRatioPadRightBottom(const cv::cuda::GpuMat &input, size_t height, size_t width,
                                                                 const cv::Scalar &bgcolor) {
+    
     float r = std::min(width / (input.cols * 1.0), height / (input.rows * 1.0));
     int unpad_w = r * input.cols;
     int unpad_h = r * input.rows;

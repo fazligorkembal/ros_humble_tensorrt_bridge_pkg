@@ -13,7 +13,7 @@ class TensorRTBridge
 public:
     TensorRTBridge(rclcpp::Logger logger_r, std::string model_path, std::string precision_type);
     void modelInfo();
-    void predict(cv::Mat input);
+    void predict(std::string imgPath);
     ~TensorRTBridge();
 
 private:
